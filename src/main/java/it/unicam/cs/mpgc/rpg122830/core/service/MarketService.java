@@ -72,6 +72,9 @@ public class MarketService {
     }
 
     public void buyVehicle(Player player, Vehicle vehicle) throws InsufficientFundsException {
+        if (!availableVehicles.contains(vehicle)) {
+            throw new IllegalArgumentException("Vehicle is not in the market.");
+        }
         int price = vehicle.getCurrentValue();
         player.deductCash(price);
         player.addVehicle(vehicle);
@@ -79,6 +82,9 @@ public class MarketService {
     }
 
     public void buyComponent(Player player, Component component) throws InsufficientFundsException {
+        if (!availableComponents.contains(component)) {
+            throw new IllegalArgumentException("Component is not in the market.");
+        }
         int price = getComponentPrice(component);
         player.deductCash(price);
         player.addComponent(component);
@@ -86,6 +92,9 @@ public class MarketService {
     }
 
     public void sellVehicle(Player player, Vehicle vehicle) {
+        if (!player.getVehicles().contains(vehicle)) {
+            throw new IllegalArgumentException("Player does not own this vehicle.");
+        }
         // Sell for 75% of its current condition-adjusted value
         int payout = (int) (vehicle.getCurrentValue() * 0.75);
         player.addCash(payout);
@@ -93,6 +102,9 @@ public class MarketService {
     }
 
     public void sellComponent(Player player, Component component) {
+        if (!player.getInventory().contains(component)) {
+            throw new IllegalArgumentException("Component is not in player's inventory.");
+        }
         // Sell for 50% of the brand-new component price
         int payout = (int) (getComponentPrice(component) * 0.50 * component.getCondition());
         player.addCash(Math.max(10, payout));
